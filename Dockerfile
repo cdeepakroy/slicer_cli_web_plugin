@@ -73,7 +73,7 @@ RUN cd $build_path && \
     ninja
 
 # install ctk-cli
-conda install --yes -c cdeepakroy ctk-cli=1.3.1
+RUN conda install --yes -c cdeepakroy ctk-cli=1.3.1
 
 # git clone install slicer_cli_web
 RUN git clone git@github.com:girder/slicer_cli_web.git && cd slicer_cli_web \
