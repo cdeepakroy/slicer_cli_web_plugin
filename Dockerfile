@@ -73,10 +73,15 @@ COPY . $my_plugin_path
 RUN cd $my_plugin_path && \
     pip install -r requirements.txt
 
-# build c++ CLIs and executable directory to PATH
+# build c++ CLIs
 RUN cd Applications && \
-    mkdir build && \
-
+    mkdir build && cd build && \
+    cmake \
+        -G Ninja \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DSlicerExecutionModel_DIR:PATH=$build_path/SEM-build \
+        ../ && \
+    ninja
 
 # use entrypoint of slicer_cli_web to expose slicer CLIS of this plugin on web
 WORKDIR $my_plugin_path/Applications
