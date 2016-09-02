@@ -1,0 +1,9 @@
+{
+  "sample_python_cli": {
+    "type"    : "python"
+  },
+
+  "sample_cpp_cli": {
+    "type"    : "cxx"
+  }
+}
