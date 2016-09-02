@@ -9,7 +9,7 @@ RUN apt-get update && \
     git \
     emacs vim \
     make cmake cmake-curses-gui \
-    ninja-build \
+    ninja-build && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
