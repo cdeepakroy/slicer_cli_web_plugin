@@ -14,7 +14,7 @@
 #  limitations under the License.
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5.1)
 
 #-----------------------------------------------------------------------------
 # List all C++ CLI modules here in topological order and try to be as close
@@ -26,5 +26,5 @@ set(cli_modules
 
 foreach(module ${cli_modules})
     add_subdirectory(${module})
-endforeach(module)
+endforeach()
 

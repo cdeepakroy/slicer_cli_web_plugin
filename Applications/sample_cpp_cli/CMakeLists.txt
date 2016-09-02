@@ -14,7 +14,7 @@
 #  limitations under the License.
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5.1)
 
 set( MODULE_NAME sample_cpp_cli )
 
@@ -26,5 +26,5 @@ include( ${SlicerExecutionModel_USE_FILE} )
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   EXECUTABLE_ONLY
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${MODULE_NAME}/bin
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
