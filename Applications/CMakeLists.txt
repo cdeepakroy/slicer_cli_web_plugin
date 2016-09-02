@@ -24,7 +24,6 @@ set(cli_modules
     sample_cpp_cli
 )
 
-foreach(module ${cli_modules})
+foreach(module IN LISTS cli_modules)
     add_subdirectory(${module})
-endforeach(module)
-
+endforeach()
