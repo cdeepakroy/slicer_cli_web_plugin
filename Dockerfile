@@ -62,7 +62,7 @@ RUN cd $build_path && git clone --depth 1 -b ${ITK_GIT_TAG} git://itk.org/ITK.gi
 # git clone install SlicerExecutionModel (needed only for C++ CLIs)
 ENV SEM_GIT_TAG 7525fc777a064529aff55e41aef6d91a85074553
 RUN cd $build_path && \
-    git clone git@github.com:Slicer/SlicerExecutionModel.git && \
+    git clone git://github.com/Slicer/SlicerExecutionModel.git && \
     cd SlicerExecutionModel && git reset --hard ${SEM_GIT_TAG} && cd ../ && \
     mkdir SEM-build && cd SEM-build && \
     cmake \
