@@ -25,5 +25,6 @@ set(cli_modules
 )
 
 foreach(module ${cli_modules})
-    add_subdirectory(sample_cpp_cli)
+    add_subdirectory(${module})
 endforeach(module)
+
