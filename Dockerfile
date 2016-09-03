@@ -81,12 +81,10 @@ RUN cd $build_path && \
     git clone git://github.com/girder/slicer_cli_web.git && cd slicer_cli_web \
     pip install -U -r requirements.txt setuptools==19.4
 
-# Copy files of my plugin
-ENV my_plugin_path=$PWD/my_plugin
-RUN mkdir -p $my_plugin_path
-COPY . $my_plugin_path
-RUN cd $my_plugin_path && \
-    pip install -r requirements.txt
+# Copy 'Applications' from build context into the container
+ENV APPLICATIONS_DIR $build_path/Applications
+COPY Applications ${APPLICATIONS_DIR}
+
 
 # build c++ CLIs
 RUN cd Applications && \
