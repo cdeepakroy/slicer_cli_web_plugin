@@ -30,7 +30,8 @@ ENV CMAKE_VERSION_MAJOR 3
 ENV CMAKE_VERSION_MINOR 6
 ENV CMAKE_VERSION_PATCH 1
 ENV CMAKE_VERSION ${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
-RUN wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
+RUN cd $build_path && \
+  wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
   hash=$(sha256sum ./cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz | awk '{ print $1 }') && \
   [ $hash = "${CMAKE_ARCHIVE_SHA256}" ] && \
   tar -xzvf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
