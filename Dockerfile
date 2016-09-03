@@ -80,8 +80,10 @@ RUN conda install --yes -c cdeepakroy ctk-cli=1.3.1
 
 # Download/install slicer_cli_web
 RUN cd $build_path && \
-    git clone git://github.com/girder/slicer_cli_web.git && cd slicer_cli_web \
-    pip install -U -r requirements.txt setuptools==19.4
+    git clone git://github.com/girder/slicer_cli_web.git && \
+    cd slicer_cli_web && \
+    pip install -U -r requirements.txt && \
+    pip install --ignore-installed -U setuptools==19.4
 
 # Copy 'Applications' from build context into the container
 ENV APPLICATIONS_DIR $build_path/Applications
@@ -107,5 +109,5 @@ RUN mkdir ${APPLICATIONS_DIR}-build && \
 
 # use entrypoint of slicer_cli_web to expose slicer CLIS of this plugin on web
 WORKDIR $APPLICATIONS_DIR
-ENTRYPOINT ["/build/miniconda/bin/python" ,"/build/slicer_cli_web/server/cli_list_entrypoint.py"]
+#ENTRYPOINT ["/build/miniconda/bin/python" ,"/build/slicer_cli_web/server/cli_list_entrypoint.py"]
 
