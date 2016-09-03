@@ -104,5 +104,5 @@ RUN mkdir ${APPLICATIONS_DIR}-build && \
     rm -rf ${APPLICATIONS_DIR}-build
 
 # use entrypoint of slicer_cli_web to expose slicer CLIS of this plugin on web
-WORKDIR $my_plugin_path/Applications
-ENTRYPOINT ["/build/miniconda/bin/python" ,"/slicer_cli_web/server/cli_list_entrypoint.py"]
+WORKDIR $APPLICATIONS_DIR
+ENTRYPOINT ["/build/miniconda/bin/python" ,"/build/slicer_cli_web/server/cli_list_entrypoint.py"]
