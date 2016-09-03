@@ -40,6 +40,9 @@ RUN cd $build_path && \
   rm cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
 ENV PATH=$build_path/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}
 
+# Disable "You are in 'detached HEAD' state." warning
+RUN git config --global advice.detachedHead false
+
 # Download/configure/build/install ITK for SlicerExecutionModel (needed only for C++ CLIs)
 ENV ITK_GIT_TAG v4.10.0
 RUN cd $build_path && git clone --depth 1 -b ${ITK_GIT_TAG} git://itk.org/ITK.git && \
