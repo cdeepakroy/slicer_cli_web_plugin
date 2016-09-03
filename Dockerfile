@@ -85,6 +85,10 @@ RUN cd $build_path && \
 ENV APPLICATIONS_DIR $build_path/Applications
 COPY Applications ${APPLICATIONS_DIR}
 
+# Install python CLI requirements
+RUN cd ${APPLICATIONS_DIR} && \
+  find . -name requirements\*.txt -print -exec pip install -U -r {} \;
+
 
 # build c++ CLIs
 RUN cd Applications && \
