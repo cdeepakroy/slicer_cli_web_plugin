@@ -89,16 +89,19 @@ COPY Applications ${APPLICATIONS_DIR}
 RUN cd ${APPLICATIONS_DIR} && \
   find . -name requirements\*.txt -print -exec pip install -U -r {} \;
 
-
-# build c++ CLIs
-RUN cd Applications && \
-    mkdir build && cd build && \
+# Build c++ CLIs
+RUN mkdir ${APPLICATIONS_DIR}-build && \
+    cd ${APPLICATIONS_DIR}-build && \
+    echo "${PATH}" && \
+    which cmake && \
     cmake \
         -G Ninja \
         -DCMAKE_BUILD_TYPE:STRING=Release \
         -DSlicerExecutionModel_DIR:PATH=$build_path/SEM-build \
-        ../ && \
-    ninja
+        ${APPLICATIONS_DIR} && \
+    ninja && \
+    cd .. && \
+    rm -rf ${APPLICATIONS_DIR}-build
 
 # use entrypoint of slicer_cli_web to expose slicer CLIS of this plugin on web
 WORKDIR $my_plugin_path/Applications
