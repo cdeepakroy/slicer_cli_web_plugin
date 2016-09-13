@@ -1,117 +1,31 @@
-FROM ubuntu:16.04
+FROM girder/slicer_cli_web
 MAINTAINER Deepak Roy Chittajallu <deepk.chittajallu@kitware.com>
 
-# Install system pre-requisites
-RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
-    wget \
-    git \
-    emacs vim \
-    make cmake cmake-curses-gui \
-    ninja-build && \
-    apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Insert commands to install any system pre-requisites and libraries here
 
-# Working directory
-ENV build_path=$PWD/build
+# Copy files of the plugin into the docker container
+ENV slicer_cli_web_plugin_path $build_path/slicer_cli_web_plugin
+COPY . $slicer_cli_web_plugin_path
 
-# Install miniconda
-RUN mkdir -p $build_path && \
-    wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
-    -O $build_path/install_miniconda.sh && \
-    bash $build_path/install_miniconda.sh -b -p $build_path/miniconda && \
-    rm $build_path/install_miniconda.sh && \
-    chmod -R +r $build_path && \
-    chmod +x $build_path/miniconda/bin/python
-ENV PATH=$build_path/miniconda/bin:${PATH}
-
-# Install CMake
-ENV CMAKE_ARCHIVE_SHA256 fdda4a8324e23c705ef0c2c45ba934ff3bd43798fb5631eec2d453693dbe777c
-ENV CMAKE_VERSION_MAJOR 3
-ENV CMAKE_VERSION_MINOR 6
-ENV CMAKE_VERSION_PATCH 1
-ENV CMAKE_VERSION ${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
-RUN cd $build_path && \
-  wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
-  hash=$(sha256sum ./cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz | awk '{ print $1 }') && \
-  [ $hash = "${CMAKE_ARCHIVE_SHA256}" ] && \
-  tar -xzvf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
-  rm cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-ENV PATH=$build_path/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}
-
-# Disable "You are in 'detached HEAD' state." warning
-RUN git config --global advice.detachedHead false
-
-# Download/configure/build/install ITK for SlicerExecutionModel (needed only for C++ CLIs)
-ENV ITK_GIT_TAG v4.10.0
-RUN cd $build_path && git clone --depth 1 -b ${ITK_GIT_TAG} git://itk.org/ITK.git && \
-    mkdir ITK-build && \
-    cd ITK-build && \
-    cmake \
-        -G Ninja \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -DBUILD_EXAMPLES:BOOL=OFF \
-        -DBUILD_TESTING:BOOL=OFF \
-        -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
-        -DITK_LEGACY_REMOVE:BOOL=ON \
-        -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF \
-        -DITK_USE_SYSTEM_LIBRARIES:BOOL=OFF \
-        -DModule_ITKCommon:BOOL=ON \
-        -DModule_ITKIOXML:BOOL=ON \
-        -DModule_ITKExpat:BOOL=ON \
-        ../ITK && \
-    ninja install && \
-    rm -rf ITK ITK-build
-
-# Download/configure/build SlicerExecutionModel (needed only for C++ CLIs)
-ENV SEM_GIT_TAG 7525fc777a064529aff55e41aef6d91a85074553
-RUN cd $build_path && \
-    git clone git://github.com/Slicer/SlicerExecutionModel.git && \
-    (cd SlicerExecutionModel && git checkout ${SEM_GIT_TAG}) && \
-    mkdir SEM-build && cd SEM-build && \
-    cmake \
-        -G Ninja \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DBUILD_TESTING:BOOL=OFF \
-        ../SlicerExecutionModel && \
-    ninja
-
-# Install ctk-cli
-RUN conda install --yes -c cdeepakroy ctk-cli=1.3.1
-
-# Download/install slicer_cli_web
-ENV SLICER_CLI_WEB_TAG 55252d023f93d5da923ea4e31941a34340df495e
-RUN cd $build_path && \
-    git clone git://github.com/girder/slicer_cli_web.git && \
-    cd slicer_cli_web && git checkout ${SLICER_CLI_WEB_TAG} && \
-    pip install -U -r requirements.txt && \
-    pip install --ignore-installed -U setuptools==19.4
-
-# Copy 'Applications' from build context into the container
-ENV APPLICATIONS_DIR $build_path/Applications
-COPY Applications ${APPLICATIONS_DIR}
-
-# Install python CLI requirements
-RUN cd ${APPLICATIONS_DIR} && \
+# pip install requirments.txt (if present) of each python CLI
+RUN cd ${slicer_cli_web_plugin_path}/Applications && \
   find . -name requirements\*.txt -print -exec pip install -U -r {} \;
 
-# Build C++ CLIs
-RUN mkdir ${APPLICATIONS_DIR}-build && \
-    cd ${APPLICATIONS_DIR}-build && \
+# Build C++ CLIs (Skip if you don't have C++ CLIs)
+RUN cd ${slicer_cli_web_plugin_path}/Applications && \
+    mkdir -p build && cd build && \
     echo "${PATH}" && \
     which cmake && \
     cmake \
         -G Ninja \
         -DCMAKE_BUILD_TYPE:STRING=Release \
         -DSlicerExecutionModel_DIR:PATH=$build_path/SEM-build \
-        ${APPLICATIONS_DIR} && \
+        ../ && \
     ninja && \
     cd .. && \
-    rm -rf ${APPLICATIONS_DIR}-build
+    rm -rf build
 
 # use entrypoint of slicer_cli_web to expose slicer CLIS of this plugin on web
-WORKDIR $APPLICATIONS_DIR
-#ENTRYPOINT ["/build/miniconda/bin/python" ,"/build/slicer_cli_web/server/cli_list_entrypoint.py"]
+WORKDIR ${slicer_cli_web_plugin_path}/Applications
+ENTRYPOINT ["/build/miniconda/bin/python", "/build/slicer_cli_web/server/cli_list_entrypoint.py"]
 
