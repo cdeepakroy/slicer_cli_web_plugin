@@ -18,7 +18,7 @@ RUN mkdir -p build && cd build && \
     cmake \
         -G Ninja \
         -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DSlicerExecutionModel_DIR:PATH=$build_path/SEM-build \
+        -DSlicerExecutionModel_DIR:PATH=$BUILD_PATH/SEM-build \
         ../ && \
     ninja && \
     cd .. && \
