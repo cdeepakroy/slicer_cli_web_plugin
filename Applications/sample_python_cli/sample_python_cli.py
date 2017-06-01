@@ -17,8 +17,10 @@
 #  limitations under the License.
 ###############################################################################
 
-from ctk_cli import CLIArgumentParser
+import logging
+logging.basicConfig(level=logging.CRITICAL)
 
+from ctk_cli import CLIArgumentParser
 
 def printVectorParameter(vec, name):
 
