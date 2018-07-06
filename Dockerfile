@@ -1,5 +1,5 @@
 FROM girder/slicer_cli_web
-MAINTAINER Deepak Roy Chittajallu <deepk.chittajallu@kitware.com>
+MAINTAINER Deepak Roy Chittajallu <deepak.chittajallu@kitware.com>
 
 # Insert commands to install any system pre-requisites and libraries here
 
