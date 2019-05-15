@@ -8,8 +8,8 @@ ENV SLICER_CLI_WEB_PLUGIN_PATH /opt/slicer_cli_web_plugin
 COPY . $SLICER_CLI_WEB_PLUGIN_PATH
 WORKDIR $SLICER_CLI_WEB_PLUGIN_PATH/Applications
 
-# pip install requirments.txt (if present) of each python CLI
-RUN find . -name requirements\*.txt -print -exec pip install -U -r {} \;
+# pip install python package dependencies in requirments.txt
+RUN pip install -U -r requirements.txt
 
 # Build C++ CLIs (Skip if you don't have C++ CLIs)
 RUN mkdir -p build && cd build && \
